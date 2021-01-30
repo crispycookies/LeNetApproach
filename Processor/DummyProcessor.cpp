@@ -37,7 +37,7 @@ void DummyProcessor::setData(const cv::Mat &data) {
 }
 
 void DummyProcessor::process() {
-    std::cout << "Processing Called" << std::endl;
+    
 }
 
 cv::Mat DummyProcessor::getData() {
