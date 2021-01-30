@@ -20,10 +20,15 @@ public:
     typedef std::shared_ptr<lw_label_path_t> lw_label_path_ptr_t;
     typedef std::shared_ptr<lw_label_data_t> lw_label_data_ptr_t;
 
-    [[maybe_unused]] virtual void setPathsWithLabels(const lw_label_path_ptr_t & paths_with_label) = 0;
+    typedef std::vector<lw_label_path_ptr_t> lw_label_path_ptr_vect_t;
+    typedef std::vector<lw_label_data_ptr_t> lw_label_data_ptr_vect_t;
+
+
+    [[maybe_unused]] virtual void setPathsWithLabels(const lw_label_path_ptr_vect_t & paths_with_label) = 0;
     [[maybe_unused]] virtual void load() = 0;
     [[maybe_unused]] virtual void commit() = 0;
-    [[maybe_unused]] virtual lw_label_data_ptr_t getData() = 0;
+    [[maybe_unused]] virtual void process(const std::shared_ptr<IProcessor> & processor) = 0;
+    [[maybe_unused]] virtual lw_label_data_ptr_vect_t getData() = 0;
 };
 
 #endif //LENET_ILOADER_H
