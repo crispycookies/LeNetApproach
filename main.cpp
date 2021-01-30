@@ -43,13 +43,28 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
 
         pathsWithLabels.push_back(std::make_shared<LabelPathType>(
                 std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/0-Normal/"),
-                "Indie"));
+                "Normal"));
         pathsWithLabels.push_back(std::make_shared<LabelPathType>(
                 std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/1-NoHat/"),
-                "Hat"));
+                "NoHat"));
         pathsWithLabels.push_back(std::make_shared<LabelPathType>(
                 std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/2-NoFace/"),
-                "RLeg"));
+                "NoFace"));
+        pathsWithLabels.push_back(std::make_shared<LabelPathType>(
+                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/3-NoLeg/"),
+                "NoLeg"));
+        pathsWithLabels.push_back(std::make_shared<LabelPathType>(
+                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/4-NoBodyPrint/"),
+                "NoBodyPrint"));
+        pathsWithLabels.push_back(std::make_shared<LabelPathType>(
+                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/5-NoHand/"),
+                "NoHand"));
+        pathsWithLabels.push_back(std::make_shared<LabelPathType>(
+                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/6-NoHead/"),
+                "NoHead"));
+        pathsWithLabels.push_back(std::make_shared<LabelPathType>(
+                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/7-NoArm/"),
+                "NoArm"));
 
         loader->setPathsWithLabels(pathsWithLabels);
         loader->load();
