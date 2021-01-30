@@ -51,12 +51,15 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv){
         auto f = loader->getData();
     }catch(const std::invalid_argument & exe){
         std::cerr << exe.what() << std::endl;
+        return EXIT_FAILURE;
     }
     catch(const std::logic_error & exe){
         std::cerr << exe.what() << std::endl;
+        return EXIT_FAILURE;
     }
     catch(...){
         std::cerr << "Unknown Error Occured" << std::endl;
+        return EXIT_FAILURE;
     }
 
 
