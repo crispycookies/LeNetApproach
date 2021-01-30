@@ -62,8 +62,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
         lnet.makeLabelFromData();
         lnet.train();
         lnet.saveNet("indie_file_model.mod");
-
-
+        lnet.readNet("indie_file_model.mod");
+        lnet.predict(nullptr);
     } catch (const std::invalid_argument &exe) {
         std::cerr << exe.what() << std::endl;
         return EXIT_FAILURE;

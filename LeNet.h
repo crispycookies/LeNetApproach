@@ -43,11 +43,11 @@ protected:
     /*Parameterize through templates*/
     using LENET = dlib::loss_multiclass_log<
             dlib::fc<10,
-            dlib::relu<dlib::fc<84,
-            dlib::relu<dlib::fc<120,
-            dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<16, 5, 5, 1, 1,
-            dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<6, 5, 5, 1, 1,
-            dlib::input<dlib::matrix<dlibType>>>>>>>>>>>>>>;
+                    dlib::relu<dlib::fc<84,
+                            dlib::relu<dlib::fc<120,
+                                    dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<16, 5, 5, 1, 1,
+                                            dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<6, 5, 5, 1, 1,
+                                                    dlib::input<dlib::matrix<dlibType>>>>>>>>>>>>>>;
 
     ILoader::lw_label_data_ptr_vect_t mData;
     std::map<std::string, unsigned long> mConverter;
@@ -59,36 +59,37 @@ protected:
     ln_data_vect_t mPreparedData;
     ln_label_vect_t mLabels;
 
-    virtual void fillConverter(){
-        if(mData.empty()){
+    virtual void fillConverter() {
+        if (mData.empty()) {
             throw std::logic_error("Empty Data in Line" + std::to_string(__LINE__) + " of File: " + __FILE__);
         }
         auto counter = 0;
-        for(auto & i : mData){
-            if(i == nullptr){
+        for (auto &i : mData) {
+            if (i == nullptr) {
                 throw std::invalid_argument("Nullptr in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
             }
-            if(!mConverter.contains(i->getLabel())){
+            if (!mConverter.contains(i->getLabel())) {
                 mConverter[i->getLabel()] = counter++;
             }
         }
     }
 
     virtual std::pair<ln_data_vect_t, ln_label_vect_t>
-    createLabelAndDataVect(const ILoader::lw_label_data_ptr_vect_t &loc_data){
+    createLabelAndDataVect(const ILoader::lw_label_data_ptr_vect_t &loc_data) {
         auto data = ln_data_vect_t();
         auto labels = ln_label_vect_t();
 
-        if(loc_data.empty()){
+        if (loc_data.empty()) {
             throw std::logic_error("Empty Data in Line" + std::to_string(__LINE__) + " of File: " + __FILE__);
         }
 
-        for(auto & i : loc_data){
-            if(i == nullptr){
+        for (auto &i : loc_data) {
+            if (i == nullptr) {
                 throw std::invalid_argument("Nullptr in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
             }
-            if(!mConverter.contains(i->getLabel())){
-                throw std::invalid_argument("Converter does not Contain Keyword: " + std::to_string(__LINE__) + " of File: " + __FILE__);
+            if (!mConverter.contains(i->getLabel())) {
+                throw std::invalid_argument(
+                        "Converter does not Contain Keyword: " + std::to_string(__LINE__) + " of File: " + __FILE__);
             }
             data.emplace_back(i->getData());
             labels.emplace_back(mConverter[i->getLabel()]);
@@ -103,8 +104,7 @@ protected:
     ln_data_dlib_vect_t prepareFromOpenCV(ln_data_vect_t vector) {
         auto d = ln_data_dlib_vect_t();
 
-        for(auto & v : vector){
-            auto i = dlib::cv_image<cvType>(v);
+        for (auto &v : vector) {
             dlib::matrix<dlibType> d_mat;
             dlib::assign_image(d_mat, dlib::cv_image<cvType>(v));
             d.emplace_back(d_mat);
@@ -114,18 +114,21 @@ protected:
     }
 
 public:
-    [[maybe_unused]] explicit LeNet(ILoader::lw_label_data_ptr_vect_t data, std::string sync_file) : mData(std::move(data)),
-                                                                                    mSyncFile(std::move(sync_file)) {};
+    [[maybe_unused]] explicit LeNet(ILoader::lw_label_data_ptr_vect_t data, std::string sync_file) : mData(
+            std::move(data)),
+                                                                                                     mSyncFile(
+                                                                                                             std::move(
+                                                                                                                     sync_file)) {};
 
-    [[maybe_unused]] virtual void makeLabelFromData(){
+    [[maybe_unused]] virtual void makeLabelFromData() {
         fillConverter();
-        auto [data, labels] = createLabelAndDataVect(mData);
+        auto[data, labels] = createLabelAndDataVect(mData);
         mPreparedData = data;
         mLabels = labels;
     }
 
 
-    [[maybe_unused]] virtual void train(){
+    [[maybe_unused]] virtual void train() {
         dlib::dnn_trainer<LENET> trainer(mNet);
         trainer.set_learning_rate(0.01);
         trainer.set_min_learning_rate(0.00001);
@@ -141,15 +144,42 @@ public:
         trainer.train(data, mLabels);
     }
 
-    [[maybe_unused]] virtual void predict(){
+    [[maybe_unused]] virtual unsigned long predict(const ILoader::lw_label_data_ptr_t &ptr) {
+        if (ptr == nullptr) {
+            throw std::logic_error("Nullptr in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
+        }
+        dlib::matrix<dlibType> d_mat;
+        dlib::assign_image(d_mat, dlib::cv_image<cvType>(ptr->getData()));
 
+        return mNet(d_mat);
     }
 
-    [[maybe_unused]] virtual void saveNet(const std::string & file){
-        if(file.empty()){
-            throw std::invalid_argument("Filename Empty in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
+    [[maybe_unused]] virtual std::optional<std::string> resolve(unsigned long value) {
+        if(value > mConverter.size()){
+            throw std::logic_error("Value to Resolve too large/In Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
+        }
+        for (auto it = mConverter.begin(); it != mConverter.end(); ++it) {
+            if (it->second == value) {
+                return it->first;
+            }
+        }
+        return std::nullopt;
+    }
+
+    [[maybe_unused]] virtual void saveNet(const std::string &file) {
+        if (file.empty()) {
+            throw std::invalid_argument(
+                    "Filename Empty in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
         }
         dlib::serialize(file) << mNet;
+    }
+
+    [[maybe_unused]] virtual void readNet(const std::string &file) {
+        if (file.empty()) {
+            throw std::invalid_argument(
+                    "Filename Empty in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
+        }
+        dlib::deserialize(file) >> mNet;
     }
 
     ~LeNet() override = default;
