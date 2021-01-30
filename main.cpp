@@ -33,7 +33,7 @@
 #include "File/LabelDataType.h"
 #include "Processor/DummyProcessor.h"
 
-int main(int argc, char **argv){
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv){
     auto n = LabelDataType("Test", std::filesystem::path("hash.jpg"));
     n.load();
     auto d = n.getData();
