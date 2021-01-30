@@ -43,17 +43,17 @@ protected:
     /*Parameterize through templates*/
     using LENET = dlib::loss_multiclass_log<
             dlib::fc<10,
-                    dlib::relu<dlib::fc<84,
-                            dlib::relu<dlib::fc<120,
-                                    dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<16, 5, 5, 1, 1,
-                                            dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<6, 5, 5, 1, 1,
-                                                    dlib::input<dlib::matrix<dlibType>>>>>>>>>>>>>>;
+            dlib::relu<dlib::fc<84,
+            dlib::relu<dlib::fc<120,
+            dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<16, 5, 5, 1, 1,
+            dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<6, 5, 5, 1, 1,
+            dlib::input<dlib::matrix<dlibType>>>>>>>>>>>>>>;
 
     ILoader::lw_label_data_ptr_vect_t mData;
-    std::map<std::string, int> mConverter;
+    std::map<std::string, unsigned long> mConverter;
 
     typedef std::vector<cv::Mat> ln_data_vect_t;
-    typedef std::vector<int> ln_label_vect_t;
+    typedef std::vector<unsigned long> ln_label_vect_t;
     typedef std::vector<dlib::matrix<dlibType>> ln_data_dlib_vect_t;
 
     ln_data_vect_t mPreparedData;
@@ -104,7 +104,10 @@ protected:
         auto d = ln_data_dlib_vect_t();
 
         for(auto & v : vector){
-            d.template emplace_back(dlib::cv_image<cvType>(v));
+            auto i = dlib::cv_image<cvType>(v);
+            dlib::matrix<dlibType> d_mat;
+            dlib::assign_image(d_mat, dlib::cv_image<cvType>(v));
+            d.emplace_back(d_mat);
         }
 
         return d;

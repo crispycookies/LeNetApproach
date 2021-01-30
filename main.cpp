@@ -58,13 +58,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
 
         auto f = loader->getData();
 
-        using LeNet = dlib::loss_multiclass_log<
-                dlib::fc<10,
-                dlib::relu<dlib::fc<84,
-                dlib::relu<dlib::fc<120,
-                dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<16, 5, 5, 1, 1,
-                dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<6, 5, 5, 1, 1,
-                dlib::input<dlib::matrix<unsigned char>>>>>>>>>>>>>>;
+        auto lnet = LeNet<dlib::bgr_pixel, unsigned char>(f,"indie_sync_file.sync");
+        lnet.makeLabelFromData();
+        lnet.train();
+        lnet.saveNet("indie_file_model.mod");
 
 
     } catch (const std::invalid_argument &exe) {
@@ -72,6 +69,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
         return EXIT_FAILURE;
     }
     catch (const std::logic_error &exe) {
+        std::cerr << exe.what() << std::endl;
+        return EXIT_FAILURE;
+    }
+    catch (const std::exception & exe){
         std::cerr << exe.what() << std::endl;
         return EXIT_FAILURE;
     }
