@@ -66,14 +66,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
                 dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<6, 5, 5, 1, 1,
                 dlib::input<dlib::matrix<unsigned char>>>>>>>>>>>>>>;
 
-        LeNet net;
-        dlib::dnn_trainer<LeNet> trainer(net);
-        trainer.set_learning_rate(0.01);
-        trainer.set_min_learning_rate(0.00001);
-        trainer.set_mini_batch_size(128);
-        trainer.be_verbose();
 
-        trainer.set_synchronization_file("indie_train_sync", std::chrono::seconds(20));
     } catch (const std::invalid_argument &exe) {
         std::cerr << exe.what() << std::endl;
         return EXIT_FAILURE;
