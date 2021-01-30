@@ -28,28 +28,37 @@
 
 #include <iostream>
 
-#include <dlib/dnn.h>
-
 #include "File/LabelDataType.h"
 #include "Processor/DummyProcessor.h"
 #include "Loader/Loader.h"
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv){
-    auto dummy_processor = std::make_shared<DummyProcessor>();
+    try{
+        auto dummy_processor = std::make_shared<DummyProcessor>();
 
-    auto loader = std::make_shared<Loader>();
-    auto pathsWithLabels = ILoader::lw_label_path_ptr_vect_t();
+        auto loader = std::make_shared<Loader>();
+        auto pathsWithLabels = ILoader::lw_label_path_ptr_vect_t();
 
-    pathsWithLabels.push_back(std::make_shared<LabelPathType>(std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/0-Normal/"),"Indie"));
-    pathsWithLabels.push_back(std::make_shared<LabelPathType>(std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/1-NoHat/"),"Hat"));
-    pathsWithLabels.push_back(std::make_shared<LabelPathType>(std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/2-NoFace/"),"RLeg"));
+        pathsWithLabels.push_back(std::make_shared<LabelPathType>(std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/0-Normal/"),"Indie"));
+        pathsWithLabels.push_back(std::make_shared<LabelPathType>(std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/1-NoHat/"),"Hat"));
+        pathsWithLabels.push_back(std::make_shared<LabelPathType>(std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/2-NoFace/"),"RLeg"));
 
-    loader->setPathsWithLabels(pathsWithLabels);
-    loader->load();
-    loader->commit();
-    loader->process(dummy_processor);
+        loader->setPathsWithLabels(pathsWithLabels);
+        loader->load();
+        loader->commit();
+        loader->process(dummy_processor);
 
-    auto f = loader->getData();
+        auto f = loader->getData();
+    }catch(const std::invalid_argument & exe){
+        std::cerr << exe.what() << std::endl;
+    }
+    catch(const std::logic_error & exe){
+        std::cerr << exe.what() << std::endl;
+    }
+    catch(...){
+        std::cerr << "Unknown Error Occured" << std::endl;
+    }
+
 
     return EXIT_SUCCESS;
 }
