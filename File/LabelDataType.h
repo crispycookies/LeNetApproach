@@ -55,7 +55,7 @@ public:
 
     virtual cv::Mat & getData();
 
-    ~LabelDataType() = default;
+    ~LabelDataType() override = default;
 };
 
 #endif //LENET_LABELDATATYPE_H
