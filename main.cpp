@@ -32,16 +32,24 @@
 #include "Processor/DummyProcessor.h"
 #include "Loader/Loader.h"
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv){
-    try{
+#include "LeNet.h"
+
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
+    try {
         auto dummy_processor = std::make_shared<DummyProcessor>();
 
         auto loader = std::make_shared<Loader>();
         auto pathsWithLabels = ILoader::lw_label_path_ptr_vect_t();
 
-        pathsWithLabels.push_back(std::make_shared<LabelPathType>(std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/0-Normal/"),"Indie"));
-        pathsWithLabels.push_back(std::make_shared<LabelPathType>(std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/1-NoHat/"),"Hat"));
-        pathsWithLabels.push_back(std::make_shared<LabelPathType>(std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/2-NoFace/"),"RLeg"));
+        pathsWithLabels.push_back(std::make_shared<LabelPathType>(
+                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/0-Normal/"),
+                "Indie"));
+        pathsWithLabels.push_back(std::make_shared<LabelPathType>(
+                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/1-NoHat/"),
+                "Hat"));
+        pathsWithLabels.push_back(std::make_shared<LabelPathType>(
+                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/2-NoFace/"),
+                "RLeg"));
 
         loader->setPathsWithLabels(pathsWithLabels);
         loader->load();
@@ -49,15 +57,32 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv){
         loader->process(dummy_processor);
 
         auto f = loader->getData();
-    }catch(const std::invalid_argument & exe){
+
+        using LeNet = dlib::loss_multiclass_log<
+                dlib::fc<10,
+                dlib::relu<dlib::fc<84,
+                dlib::relu<dlib::fc<120,
+                dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<16, 5, 5, 1, 1,
+                dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<6, 5, 5, 1, 1,
+                dlib::input<dlib::matrix<unsigned char>>>>>>>>>>>>>>;
+
+        LeNet net;
+        dlib::dnn_trainer<LeNet> trainer(net);
+        trainer.set_learning_rate(0.01);
+        trainer.set_min_learning_rate(0.00001);
+        trainer.set_mini_batch_size(128);
+        trainer.be_verbose();
+
+        trainer.set_synchronization_file("indie_train_sync", std::chrono::seconds(20));
+    } catch (const std::invalid_argument &exe) {
         std::cerr << exe.what() << std::endl;
         return EXIT_FAILURE;
     }
-    catch(const std::logic_error & exe){
+    catch (const std::logic_error &exe) {
         std::cerr << exe.what() << std::endl;
         return EXIT_FAILURE;
     }
-    catch(...){
+    catch (...) {
         std::cerr << "Unknown Error Occured" << std::endl;
         return EXIT_FAILURE;
     }
