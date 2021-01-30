@@ -26,15 +26,16 @@
  * SOFTWARE.
  */
 #include "LeNet.h"
+#include <dlib/opencv.h>
 
-void LeNet::makeLabelFromData() {
+[[maybe_unused]] void LeNet::makeLabelFromData() {
     fillConverter();
     auto [data, labels] = createLabelAndDataVect(mData);
     mPreparedData = data;
     mLabels = labels;
 }
 
-void LeNet::train() {
+[[maybe_unused]] void LeNet::train() {
     dlib::dnn_trainer<LENET> trainer(mNet);
     trainer.set_learning_rate(0.01);
     trainer.set_min_learning_rate(0.00001);
@@ -44,10 +45,11 @@ void LeNet::train() {
     trainer.set_synchronization_file(mSyncFile, std::chrono::seconds(20));
 
     std::cout << "This may take a long ass time..." << std::endl;
+
     //trainer.train(mPreparedData, mLabels);
 }
 
-void LeNet::predict() {
+[[maybe_unused]] void LeNet::predict() {
 
 }
 
@@ -87,3 +89,11 @@ LeNet::createLabelAndDataVect(const ILoader::lw_label_data_ptr_vect_t &loc_data)
     }
     return {data, labels};
 }
+
+[[maybe_unused]] void LeNet::saveNet(const std::string &file) {
+    if(file.empty()){
+        throw std::invalid_argument("Filename Empty in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
+    }
+    dlib::serialize(file) << mNet;
+}
+
