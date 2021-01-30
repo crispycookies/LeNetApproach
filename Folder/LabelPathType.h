@@ -43,7 +43,7 @@ public:
     virtual std::filesystem::path & getPath();
     virtual std::string & getLabel();
 
-    ~LabelPathType() override = 0;
+    ~LabelPathType() override = default;
 };
 
 #endif //LENET_LABELPATHTYPE_H

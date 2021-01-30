@@ -32,19 +32,24 @@
 
 #include "File/LabelDataType.h"
 #include "Processor/DummyProcessor.h"
+#include "Loader/Loader.h"
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv){
-    auto n = LabelDataType("Test", std::filesystem::path("hash.jpg"));
-    n.load();
-    auto d = n.getData();
-    auto e = n.getPath();
-    auto f = n.getLabel();
-    auto g = n.getName();
+    auto dummy_processor = std::make_shared<DummyProcessor>();
 
-    auto s_ptr = std::make_shared<DummyProcessor>();
-    n.doProcess(s_ptr);
+    auto loader = std::make_shared<Loader>();
+    auto pathsWithLabels = ILoader::lw_label_path_ptr_vect_t();
 
-    auto ng = n.getData();
+    pathsWithLabels.push_back(std::make_shared<LabelPathType>(std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/0-Normal/"),"Indie"));
+    pathsWithLabels.push_back(std::make_shared<LabelPathType>(std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/1-NoHat/"),"Hat"));
+    pathsWithLabels.push_back(std::make_shared<LabelPathType>(std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/2-NoFace/"),"RLeg"));
+
+    loader->setPathsWithLabels(pathsWithLabels);
+    loader->load();
+    loader->commit();
+    loader->process(dummy_processor);
+
+    auto f = loader->getData();
 
     return EXIT_SUCCESS;
 }
