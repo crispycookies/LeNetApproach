@@ -34,12 +34,12 @@
 
 #include "LeNet.h"
 
-template <typename T, typename T2>
-auto predict(const ILoader::lw_label_data_ptr_t & d, const std::shared_ptr<LeNet<T, T2>> & lnet){
-    if(lnet == nullptr){
+template<typename T, typename T2>
+auto predict(const ILoader::lw_label_data_ptr_t &d, const std::shared_ptr<LeNet<T, T2>> &lnet) {
+    if (lnet == nullptr) {
         throw std::invalid_argument("Nullptr in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
     }
-    if(d == nullptr){
+    if (d == nullptr) {
         throw std::invalid_argument("Nullptr in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
     }
     auto p = lnet->predict(d);
@@ -47,12 +47,12 @@ auto predict(const ILoader::lw_label_data_ptr_t & d, const std::shared_ptr<LeNet
     return s;
 }
 
-template <typename T, typename T2>
-void verify(const ILoader::lw_label_data_ptr_vect_t &data, const std::shared_ptr<LeNet<T, T2>> & lnet) {
+template<typename T, typename T2>
+void verify(const ILoader::lw_label_data_ptr_vect_t &data, const std::shared_ptr<LeNet<T, T2>> &lnet) {
     if (data.empty()) {
         throw std::logic_error("data Empty in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
     }
-    if(lnet == nullptr){
+    if (lnet == nullptr) {
         throw std::invalid_argument("Nullptr in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
     }
     for (auto &i : data) {
@@ -63,16 +63,16 @@ void verify(const ILoader::lw_label_data_ptr_vect_t &data, const std::shared_ptr
 
         std::cout << "#############################################" << std::endl;
         std::cout << "File #" << i->getPath().string() << std::endl;
-        if(p == std::nullopt){
+        if (p == std::nullopt) {
             std::cout << "Prediction #" << "NaN" << std::endl;
-        }else{
+        } else {
             std::cout << "Prediction #" << p.value() << std::endl;
         }
         std::cout << "#############################################" << std::endl;
     }
 }
 
-auto load(const ILoader::lw_label_path_ptr_vect_t & paths){
+auto load(const ILoader::lw_label_path_ptr_vect_t &paths) {
     if (paths.empty()) {
         throw std::logic_error("data Empty in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
     }
@@ -87,22 +87,22 @@ auto load(const ILoader::lw_label_path_ptr_vect_t & paths){
     return loader->getData();
 }
 
-template <typename T, typename T2>
-void validate(const std::shared_ptr<LeNet<T, T2>> & lnet){
-    if(lnet == nullptr){
+template<typename T, typename T2>
+void validate(const std::shared_ptr<LeNet<T, T2>> &lnet) {
+    if (lnet == nullptr) {
         throw std::invalid_argument("Nullptr in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
     }
     auto validation_all = ILoader::lw_label_path_ptr_vect_t();
 
     validation_all.push_back(std::make_shared<LabelPathType>(
-            std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/All/"),
+            std::filesystem::path("../pic/All/"),
             "All"));
     validation_all.push_back(std::make_shared<LabelPathType>(
             std::filesystem::path(
-                    "/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/Combinations/"),
+                    "../pic/Combinations/"),
             "Combination"));
     validation_all.push_back(std::make_shared<LabelPathType>(
-            std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/Other/"),
+            std::filesystem::path("../pic/Other/"),
             "Other"));
 
     verify(load(validation_all), lnet);
@@ -113,38 +113,38 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
         auto pathsWithLabels = ILoader::lw_label_path_ptr_vect_t();
 
         pathsWithLabels.push_back(std::make_shared<LabelPathType>(
-                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/0-Normal/"),
+                std::filesystem::path("../pic/0-Normal/"),
                 "Normal"));
         pathsWithLabels.push_back(std::make_shared<LabelPathType>(
-                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/1-NoHat/"),
+                std::filesystem::path("../pic/1-NoHat/"),
                 "NoHat"));
         pathsWithLabels.push_back(std::make_shared<LabelPathType>(
-                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/2-NoFace/"),
+                std::filesystem::path("../pic/2-NoFace/"),
                 "NoFace"));
         pathsWithLabels.push_back(std::make_shared<LabelPathType>(
-                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/3-NoLeg/"),
+                std::filesystem::path("../pic/3-NoLeg/"),
                 "NoLeg"));
         pathsWithLabels.push_back(std::make_shared<LabelPathType>(
                 std::filesystem::path(
-                        "/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/4-NoBodyPrint/"),
+                        "../pic/4-NoBodyPrint/"),
                 "NoBodyPrint"));
         pathsWithLabels.push_back(std::make_shared<LabelPathType>(
-                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/5-NoHand/"),
+                std::filesystem::path("../pic/5-NoHand/"),
                 "NoHand"));
         pathsWithLabels.push_back(std::make_shared<LabelPathType>(
-                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/6-NoHead/"),
+                std::filesystem::path("../pic/6-NoHead/"),
                 "NoHead"));
         pathsWithLabels.push_back(std::make_shared<LabelPathType>(
-                std::filesystem::path("/home/tobi/Dokumente/FH/DIP/Abgabe/LENET/cpp/project_lego_indie/pic/7-NoArm/"),
+                std::filesystem::path("../pic/7-NoArm/"),
                 "NoArm"));
 
         auto f = load(pathsWithLabels);
-        auto lnet = std::make_shared<LeNet<dlib::bgr_pixel, unsigned char>>(f, "indie_sync_file.sync");
+        auto lnet = std::make_shared<LeNet<dlib::bgr_pixel, unsigned char>>(f, "../Model/indie_sync_file.sync");
 
         lnet->makeLabelFromData();
         lnet->train();
-        lnet->saveNet("indie_file_model.mod");
-        lnet->readNet("indie_file_model.mod");
+        lnet->saveNet("../Model/indie_file_model.mod");
+        lnet->readNet("../Model/indie_file_model.mod");
 
         validate(lnet);
     } catch (const std::invalid_argument &exe) {
