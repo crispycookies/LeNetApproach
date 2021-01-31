@@ -130,9 +130,11 @@ public:
 
     [[maybe_unused]] virtual void train() {
         dlib::dnn_trainer<LENET> trainer(mNet);
-        trainer.set_learning_rate(0.05);
+        trainer.set_learning_rate(0.01);
         trainer.set_min_learning_rate(0.00001);
         trainer.set_mini_batch_size(128);
+        trainer.set_iterations_without_progress_threshold(50);
+        trainer.set_max_num_epochs(2000);
         trainer.be_verbose();
 
         trainer.set_synchronization_file(mSyncFile, std::chrono::seconds(20));
