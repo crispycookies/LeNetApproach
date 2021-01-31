@@ -130,7 +130,7 @@ public:
 
     [[maybe_unused]] virtual void train() {
         dlib::dnn_trainer<LENET> trainer(mNet);
-        trainer.set_learning_rate(0.01);
+        trainer.set_learning_rate(0.05);
         trainer.set_min_learning_rate(0.00001);
         trainer.set_mini_batch_size(128);
         trainer.be_verbose();
