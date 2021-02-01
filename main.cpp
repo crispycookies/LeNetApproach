@@ -34,6 +34,8 @@
 
 #include "LeNet.h"
 
+#include "ImgShow.h"
+
 template<typename T, typename T2>
 auto predict(const ILoader::lw_label_data_ptr_t &d, const std::shared_ptr<LeNet<T, T2>> &lnet) {
     if (lnet == nullptr) {
@@ -55,20 +57,38 @@ void verify(const ILoader::lw_label_data_ptr_vect_t &data, const std::shared_ptr
     if (lnet == nullptr) {
         throw std::invalid_argument("Nullptr in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
     }
+
+    fl_message_title("Use console?");
+    bool use_console = fl_choice("Do you want to print the result to console rather than using a GUI?", "No", "Yes", 0);
+
+#ifdef _WIN32
+    if(!use_console)
+        FreeConsole();
+#endif
+
     for (auto &i : data) {
         if (i == nullptr) {
             throw std::invalid_argument("Nullptr in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
         }
         auto p = predict(i, lnet);
 
-        std::cout << "#############################################" << std::endl;
-        std::cout << "File #" << i->getPath().string() << std::endl;
+        std::stringstream strstr;
+        strstr << "#############################################" << std::endl;
+        strstr << "File #" << i->getPath().string() << std::endl;
         if (p == std::nullopt) {
-            std::cout << "Prediction #" << "NaN" << std::endl;
+            strstr << "Prediction #" << "NaN" << std::endl;
         } else {
-            std::cout << "Prediction #" << p.value() << std::endl;
+            strstr << "Prediction #" << p.value() << std::endl;
         }
-        std::cout << "#############################################" << std::endl;
+        strstr << "#############################################" << std::endl;
+        if(use_console){
+            std::cout << strstr.str();
+	}
+        else{
+            ImgShow a(i->getData(), "Picture", ImgShow::rgb, false);
+            fl_message_title("Result");
+            fl_message(strstr.str().c_str());
+        }
     }
 }
 
@@ -110,6 +130,10 @@ void validate(const std::shared_ptr<LeNet<T, T2>> &lnet) {
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
     try {
+        // wm icon
+        auto icon = std::make_shared<Fl_RGB_Image>(icon_data, 128, 128, ImgShow::fl_imgtype::rgba, 0);
+        ((Fl_Double_Window*)fl_message_icon()->parent())->icon(icon.get());
+
         auto pathsWithLabels = ILoader::lw_label_path_ptr_vect_t();
 
         pathsWithLabels.push_back(std::make_shared<LabelPathType>(
@@ -165,5 +189,5 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
     }
 
 
-    return EXIT_SUCCESS;
+    return(Fl::run());
 }

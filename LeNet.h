@@ -68,7 +68,7 @@ protected:
             if (i == nullptr) {
                 throw std::invalid_argument("Nullptr in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
             }
-            if (!mConverter.contains(i->getLabel())) {
+            if (!mConverter.count(i->getLabel())) {
                 mConverter[i->getLabel()] = counter++;
             }
         }
@@ -87,7 +87,7 @@ protected:
             if (i == nullptr) {
                 throw std::invalid_argument("Nullptr in Line: " + std::to_string(__LINE__) + " of File: " + __FILE__);
             }
-            if (!mConverter.contains(i->getLabel())) {
+            if (!mConverter.count(i->getLabel())) {
                 throw std::invalid_argument(
                         "Converter does not Contain Keyword: " + std::to_string(__LINE__) + " of File: " + __FILE__);
             }

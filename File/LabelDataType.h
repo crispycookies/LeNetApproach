@@ -43,8 +43,8 @@ protected:
     std::tuple<std::string, std::filesystem::path, std::string> mTuple;
     cv::Mat mData;
 public:
-    LabelDataType(const std::string & label, const std::filesystem::path & path) : mTuple({label, path, path}) {}
-    LabelDataType(const std::string & label, const std::filesystem::path & path, const std::string & name) : mTuple({label, path, name}) {}
+    LabelDataType(const std::string & label, const std::filesystem::path & path) { mTuple = std::make_tuple(label, path, path.string()); }
+    LabelDataType(const std::string & label, const std::filesystem::path & path, const std::string & name) { mTuple = std::make_tuple(label, path, name); }
 
     virtual void load();
     virtual void doProcess(const std::shared_ptr<IProcessor> & processor);
